@@ -1,0 +1,152 @@
+generated: '2026-08-26'
+method: probed
+source: https://numitea.com/api/ucp/mcp
+note: >-
+  Numi Tea serves a LIVE, remotely reachable MCP server on its own domain. It is
+  the Universal Commerce Protocol (UCP) shopping service that Shopify provisions
+  for a merchant storefront, but it is hosted at numitea.com, advertised by Numi
+  Tea's own robots.txt, llms.txt and agents.md, and the UCP discovery document
+  names Numi Tea as the merchant (merchant_name "Numi Tea", merchant_origin
+  "numitea.com", shop id 82698961207). It is therefore recorded as Numi Tea's
+  agent surface, with the platform provenance stated plainly.
+
+deployment:
+  mode: remote
+  endpoint: https://numitea.com/api/ucp/mcp
+  install: null
+  package: null
+  auth: oauth
+  verified: probed
+
+server_info:
+  name: universal-commerce
+  version: 0.1.0
+  protocol_version: '2024-11-05'
+  source: >-
+    Observed in the initialize response on 2026-08-26. Note the MCP protocol
+    version negotiated (2024-11-05) is older than the UCP protocol version the
+    store advertises (2026-04-08); they are different version lines.
+  capabilities:
+    tools:
+      list_changed: true
+    prompts:
+      list_changed: true
+    resources:
+      list_changed: true
+    logging: true
+
+discovery:
+  well_known: https://numitea.com/.well-known/ucp
+  protected_resource: https://numitea.com/.well-known/oauth-protected-resource
+  robots_txt: https://numitea.com/robots.txt
+  agents_md: https://numitea.com/agents.md
+  llms_txt: https://numitea.com/llms.txt
+
+access:
+  tools_list: anonymous
+  tools_call: authenticated
+  evidence: >-
+    An unauthenticated POST of {"jsonrpc":"2.0","id":1,"method":"tools/list"} on
+    2026-08-26 returned HTTP 200 with the full 13-tool manifest including complete
+    inputSchema for every tool. An unauthenticated tools/call returned JSON-RPC
+    error -32000 "AuthenticationRequired" with data "Unauthorized: A valid JWT is
+    required to call <tool>. See
+    https://shopify.dev/docs/agents/get-started/authentication for instructions on
+    generating a token and authenticating your requests."
+  auth_docs: https://shopify.dev/docs/agents/get-started/authentication
+
+human_approval_required: true
+human_approval_evidence: >-
+  Both robots.txt and llms.txt state that checkout, payment and order placement
+  must never be finalized by an agent without an explicit, contemporaneous human
+  approval step. This is a published constraint on the agent surface, not an
+  inference.
+
+status: published
+tool_count: 13
+tools_manifest: mcp/numi-tea-mcp-tools-list.json
+tools:
+  - name: get_checkout
+    category: checkout
+    description: Returns details about the checkout, including line items, totals, and any applicable discounts or taxes.
+    required: [meta, id]
+  - name: create_checkout
+    category: checkout
+    description: Creates a checkout. Returns checkout details, including line items, totals, and any applicable discounts or taxes.
+    required: [meta, checkout]
+  - name: update_checkout
+    category: checkout
+    description: Updates a checkout. Returns checkout details, including line items, totals, and any applicable discounts or taxes.
+    required: [meta, checkout, id]
+  - name: complete_checkout
+    category: checkout
+    description: Completes a checkout and returns the checkout result, including order ID and Thank You Page URL.
+    required: [meta, id, checkout]
+    consequence: irreversible-write
+    note: Terminal payment operation; the published policy requires contemporaneous buyer approval.
+  - name: cancel_checkout
+    category: checkout
+    description: Cancels a checkout.
+    required: [meta, id]
+    reverses: create_checkout
+  - name: get_cart
+    category: cart
+    description: Get the cart contents.
+    required: [meta, id]
+  - name: create_cart
+    category: cart
+    description: Creates a new cart.
+    required: [meta, cart]
+  - name: update_cart
+    category: cart
+    description: Perform updates to a cart.
+    required: [meta, cart, id]
+  - name: cancel_cart
+    category: cart
+    description: Cancels a cart.
+    required: [meta, id]
+    reverses: create_cart
+  - name: get_order
+    category: order
+    description: Get the details of an order.
+    required: [meta, id]
+  - name: search_catalog
+    category: catalog
+    description: Search for products from the online store, hosted on Shopify.
+    required: [meta, catalog]
+  - name: lookup_catalog
+    category: catalog
+    description: Look up multiple products or variants by identifier.
+    required: [meta, catalog]
+  - name: get_product
+    category: catalog
+    description: Retrieve complete product detail by identifier. Returns a singular product.
+    required: [meta, catalog]
+
+conventions:
+  agent_profile_required: true
+  agent_profile_note: >-
+    EVERY tool takes a required `meta` object carrying meta["ucp-agent"]["profile"],
+    a URI pointing at the calling agent's own UCP agent profile. Omitting it returns
+    JSON-RPC error -32001 "UCP discovery failed" with data.code "invalid_profile_url".
+    An agent cannot call this server without publishing a profile of its own -- an
+    unusual and notable reciprocal-identity requirement.
+  money_encoding: >-
+    Every tool description states prices are integers in ISO 4217 minor units paired
+    with a currency code, e.g. {"amount": 600, "currency": "USD"} is $6.00. Agents
+    must divide by 100 for two-decimal currencies before quoting a price.
+
+other_surfaces:
+  - name: Shopify Shop skill
+    url: https://shop.app/SKILL.md
+    note: >-
+      llms.txt and robots.txt both recommend the Shopify-operated Shop skill as an
+      alternative agent path. That is Shopify's surface, not Numi Tea's, and is
+      recorded here as a pointer only.
+  - name: Storefront product JSON
+    url: https://numitea.com/products.json
+    status: 200
+    note: >-
+      Shopify's unauthenticated storefront JSON. Returned 200 with ~110KB of product
+      data. Machine-readable and documented in llms.txt, but it is a platform
+      convention rather than a contract Numi Tea authored.

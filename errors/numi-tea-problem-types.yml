@@ -1,0 +1,63 @@
+generated: '2026-08-26'
+method: probed
+source: https://numitea.com/api/ucp/mcp
+format: jsonrpc-2.0-error
+note: >-
+  Numi Tea publishes no error reference. Every entry below was observed by sending a
+  real request to the live UCP MCP endpoint on 2026-08-26 and recording the response
+  verbatim. This catalog is therefore complete only for the paths actually
+  exercised -- it is an observed sample, not a published registry, and is marked as
+  such so nobody reads it as exhaustive.
+envelope:
+  shape: '{"jsonrpc":"2.0","id":<id>,"error":{"code":<int>,"message":<string>,"data":<string|object>}}'
+  caveat: >-
+    `data` is not a stable type. It was a plain string on the authentication error and
+    a structured object on the discovery error, so a client must type-check it.
+rfc9457: false
+rfc9457_note: Not applicable; this is a JSON-RPC surface, not an HTTP+JSON one, so there is no problem+json media type to conform to.
+observed_count: 2
+problem_types:
+  - code: -32000
+    message: AuthenticationRequired
+    class: server-defined
+    data_type: string
+    data_example: >-
+      Unauthorized: A valid JWT is required to call no_such_tool. See
+      https://shopify.dev/docs/agents/get-started/authentication for instructions on
+      generating a token and authenticating your requests.
+    cause: A tools/call was made without a bearer JWT.
+    remediation: Obtain a token via the Shopify agent authentication flow and send it in the Authorization header.
+    remediation_docs: https://shopify.dev/docs/agents/get-started/authentication
+    retryable: false
+    observed: '2026-08-26'
+    note: >-
+      Notably this error fires even for a tool name that does not exist, so
+      authentication is checked before tool resolution. An unauthenticated client
+      cannot distinguish a bad tool name from a missing credential.
+  - code: -32001
+    message: UCP discovery failed
+    class: server-defined
+    data_type: object
+    data_example: '{"code":"invalid_profile_url","content":"Unable to fetch agent profile: Missing profile uri","continue_url":"https://2f9c86.myshopify.com/"}'
+    data_fields:
+      - name: code
+        description: Machine-readable sub-code. Observed value invalid_profile_url.
+      - name: content
+        description: Human-readable detail.
+      - name: continue_url
+        description: A URL the agent can hand a human to continue in a browser.
+    cause: The required meta["ucp-agent"]["profile"] URI was absent or could not be fetched.
+    remediation: Publish a UCP agent profile and pass its URI in meta["ucp-agent"]["profile"] on every call.
+    retryable: false
+    observed: '2026-08-26'
+standard_jsonrpc_codes:
+  note: >-
+    The standard JSON-RPC codes (-32700 parse error, -32600 invalid request, -32601
+    method not found, -32602 invalid params, -32603 internal error) are presumed
+    available by virtue of the transport but were NOT observed and are therefore not
+    asserted as this provider's documented behavior.
+http_layer:
+  - status: 406
+    observed_on: https://account.numitea.com/api/ucp/mcp
+    body: Not acceptable
+    note: The UCP MCP endpoint exists only on numitea.com; the account host rejects it at the HTTP layer.

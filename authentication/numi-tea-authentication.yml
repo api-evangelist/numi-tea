@@ -1,0 +1,80 @@
+generated: '2026-08-26'
+method: probed
+source: https://numitea.com/.well-known/openid-configuration
+docs: https://shopify.dev/docs/agents/get-started/authentication
+note: >-
+  Derived from the OIDC/OAuth discovery documents Numi Tea serves on its own hosts
+  and from the observed JSON-RPC auth challenge on the UCP MCP endpoint. Numi Tea
+  publishes no developer-facing API auth documentation of its own; the normative
+  reference is Shopify's agent authentication guide, which the server itself names
+  in its error payload.
+
+schemes:
+  - id: customer_account_oauth2
+    type: oauth2
+    flow: authorization_code
+    pkce: required
+    pkce_methods: [S256]
+    issuer: https://shopify.com/authentication/82698961207
+    authorization_endpoint: https://account.numitea.com/authentication/oauth/authorize
+    token_endpoint: https://account.numitea.com/authentication/oauth/token
+    end_session_endpoint: https://account.numitea.com/authentication/logout
+    jwks_uri: https://account.numitea.com/authentication/.well-known/jwks.json
+    grant_types:
+      - authorization_code
+      - refresh_token
+      - 'urn:ietf:params:oauth:grant-type:jwt-bearer'
+    token_endpoint_auth_methods:
+      - client_secret_basic
+      - client_secret_post
+    id_token_signing_alg: RS256
+    subject_types: [public]
+    claims:
+      - iss
+      - sub
+      - aud
+      - exp
+      - iat
+      - nonce
+      - sid
+      - email
+      - email_verified
+    applies_to: Shopify customer accounts on account.numitea.com
+  - id: openid_connect
+    type: openIdConnect
+    openid_connect_url: https://numitea.com/.well-known/openid-configuration
+    note: Same authorization server as customer_account_oauth2; OIDC discovery is served on both numitea.com and account.numitea.com.
+  - id: ucp_mcp_bearer
+    type: http
+    scheme: bearer
+    bearer_format: JWT
+    applies_to: https://numitea.com/api/ucp/mcp
+    evidence: >-
+      Unauthenticated tools/call returned JSON-RPC -32000 "AuthenticationRequired":
+      "Unauthorized: A valid JWT is required to call <tool>." The RFC 9728 protected
+      resource document at /.well-known/oauth-protected-resource declares
+      bearer_methods_supported ["header"] and lists account.numitea.com plus the
+      Shopify issuer as the authorization servers.
+
+protected_resource:
+  resource: https://numitea.com
+  authorization_servers:
+    - https://account.numitea.com
+    - https://shopify.com/authentication/82698961207
+  bearer_methods_supported: [header]
+  spec: RFC 9728
+
+anonymous_surface:
+  - path: /api/ucp/mcp (initialize, tools/list)
+    note: Capability discovery is anonymous; every tools/call requires a JWT.
+  - path: /products.json
+  - path: /collections/{handle}/products.json
+  - path: /.well-known/ucp
+  - path: /llms.txt
+
+api_keys: false
+api_keys_note: >-
+  Numi Tea issues no API keys and operates no developer program. There is no
+  signup, no key-provisioning surface and no self-serve credential on any Numi Tea
+  host; agent credentials for the UCP endpoint are obtained through Shopify's agent
+  authentication flow, not from Numi Tea.

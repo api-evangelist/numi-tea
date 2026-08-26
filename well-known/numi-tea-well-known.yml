@@ -1,0 +1,105 @@
+generated: '2026-08-26'
+method: probed
+source: https://numitea.com/.well-known/
+note: >-
+  Numi Tea runs its retail storefront on Shopify (shop id 82698961207, myshopify
+  domain 2f9c86.myshopify.com). The documents below are served from Numi Tea's OWN
+  hosts (numitea.com, account.numitea.com) and name Numi Tea as the merchant --
+  the UCP discovery document carries merchant_name "Numi Tea" and merchant_origin
+  "numitea.com" -- so they are recorded as Numi Tea's surface even though the
+  platform generating them is Shopify. This is the same templated/platform-served
+  case as a WordPress /wp-json root.
+hit_count: 7
+hosts:
+  - host: https://numitea.com
+    documents:
+      - path: /.well-known/ucp
+        status: 200
+        file: numi-tea-ucp.json
+        note: >-
+          Universal Commerce Protocol discovery. Advertises protocol version
+          2026-04-08 (latest) and 2026-01-23, an MCP transport endpoint, the
+          dev.ucp.shopping service, seven shopping capabilities and three payment
+          handlers (Google Pay, Shopify card, Shop Pay).
+      - path: /.well-known/ucp/2026-04-08
+        status: 200
+        file: numi-tea-ucp-2026-04-08.json
+      - path: /.well-known/ucp/2026-01-23
+        status: 200
+        file: null
+        note: Version-pinned discovery document; served but not saved (superseded by 2026-04-08).
+      - path: /.well-known/openid-configuration
+        status: 200
+        file: numi-tea-openid-configuration.json
+        note: >-
+          OIDC discovery for Shopify customer accounts. issuer
+          https://shopify.com/authentication/82698961207; authorization and token
+          endpoints are on Numi Tea's own account.numitea.com host.
+      - path: /.well-known/oauth-authorization-server
+        status: 200
+        file: numi-tea-oauth-authorization-server.json
+        note: RFC 8414 metadata; byte-identical payload to the OIDC discovery document.
+      - path: /.well-known/oauth-protected-resource
+        status: 200
+        file: numi-tea-oauth-protected-resource.json
+        note: >-
+          RFC 9728. Declares resource https://numitea.com and two authorization
+          servers (account.numitea.com and the Shopify issuer). This is the
+          document an MCP client reads to find the auth server for the UCP endpoint.
+      - path: /.well-known/security.txt
+        status: 404
+        file: null
+      - path: /.well-known/api-catalog
+        status: 404
+        file: null
+      - path: /.well-known/ai-plugin.json
+        status: 404
+        file: null
+      - path: /.well-known/agent-card.json
+        status: 404
+        file: null
+      - path: /.well-known/agent.json
+        status: 404
+        file: null
+  - host: https://account.numitea.com
+    documents:
+      - path: /.well-known/openid-configuration
+        status: 200
+        file: numi-tea-account-openid-configuration.json
+      - path: /authentication/.well-known/jwks.json
+        status: 200
+        file: numi-tea-account-jwks.json
+        note: RS256 signing keys for the customer-account id_token.
+      - path: /.well-known/agent-card.json
+        status: 404
+        file: null
+      - path: /.well-known/agent.json
+        status: 404
+        file: null
+  - host: https://numitea.eu
+    documents:
+      - path: /.well-known/security.txt
+        status: 404
+        file: null
+      - path: /.well-known/openid-configuration
+        status: 404
+        file: null
+      - path: /.well-known/agent-card.json
+        status: 404
+        file: null
+      - path: /llms.txt
+        status: 404
+        file: null
+    note: >-
+      The EU marketing site is a separate WordPress property with no discovery
+      surface at all. Every probe 404s with an HTML body.
+soft_404_control:
+  host: https://numitea.com
+  path: /.well-known/api-catalog
+  status: 404
+  bytes: 4264
+  content_type: text/html
+  note: >-
+    Control probe confirms numitea.com returns a real 404 (HTML error page) for
+    unserved /.well-known paths rather than a catch-all 200, so the 200s recorded
+    above are genuine documents, not SPA shells.

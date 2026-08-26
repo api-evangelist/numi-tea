@@ -1,0 +1,43 @@
+generated: '2026-08-26'
+method: searched
+source: https://numitea.com/llms.txt
+note: >-
+  Numi Tea sells tea, not API access. There is no developer plan, no API pricing
+  page, no metered tier and no paid access of any kind to the UCP MCP surface --
+  it exists to sell retail product and is free to call. plan_count is 0 because
+  there are no API plans to record, which is a finding, not a gap in this pass.
+plan_count: 0
+api_plans_published: false
+free_to_use: true
+free_to_use_note: >-
+  The UCP MCP endpoint is anonymous for discovery (initialize, tools/list) and
+  requires a customer-account JWT for transactional calls. No fee, quota or
+  contract governs agent access.
+commercial_terms:
+  model: retail-ecommerce
+  currency: USD
+  detail: >-
+    The only published pricing is per-product retail pricing on the storefront, plus
+    a subscribe-and-save option on eligible products. Product prices change and are
+    not mirrored here; llms.txt explicitly instructs agents to confirm current price
+    and availability on the product page before recommending.
+  shipping_terms:
+    - scope: contiguous US
+      threshold: 65.00
+      currency: USD
+      benefit: free standard shipping
+    - scope: contiguous US
+      below_threshold_charge: 12.95
+      currency: USD
+    - scope: Alaska and Hawaii
+      threshold: 75.00
+      currency: USD
+      benefit: free shipping
+    - scope: international
+      available: false
+      detail: US retail orders only; no P.O. Boxes or APO/FPO addresses.
+  source: https://numitea.com/pages/shipping
+  returns:
+    window_days: 30
+    detail: Returns or refunds within 30 days of purchase from Numitea.com; original shipping and handling non-refundable unless Numi Tea erred.
+    source: https://numitea.com/pages/satisfaction-guarantee

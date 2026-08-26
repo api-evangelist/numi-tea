@@ -1,0 +1,34 @@
+generated: '2026-08-26'
+method: probed
+source: https://numitea.com/.well-known/openid-configuration
+docs: https://shopify.dev/docs/api/customer
+note: >-
+  Read verbatim from the scopes_supported array of the OAuth/OIDC discovery
+  documents Numi Tea serves at numitea.com and account.numitea.com. Numi Tea
+  publishes no scope reference page of its own -- these four are the complete
+  advertised set.
+authorization_server: https://shopify.com/authentication/82698961207
+scope_count: 4
+scopes:
+  - name: openid
+    description: Standard OIDC scope; requests an id_token identifying the customer.
+    standard: OpenID Connect Core 1.0
+  - name: email
+    description: Standard OIDC scope; releases the email and email_verified claims.
+    standard: OpenID Connect Core 1.0
+  - name: 'customer-account-api:full'
+    description: >-
+      Full access to the Shopify Customer Account API for the authenticated
+      customer -- orders, addresses, profile and subscription state on this store.
+    vendor: shopify
+  - name: 'customer-account-mcp-api:full'
+    description: >-
+      Full access to the customer-account MCP API. This is the scope that lets an
+      agent act on the authenticated customer's account through MCP rather than
+      through the storefront UI.
+    vendor: shopify
+granularity: coarse
+granularity_note: >-
+  Both non-standard scopes are ":full". There is no read-only or per-resource
+  split, so an agent granted customer-account access to place an order also holds
+  the ability to read the customer's full order history and profile.

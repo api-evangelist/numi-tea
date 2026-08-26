@@ -1,0 +1,142 @@
+generated: '2026-08-26'
+method: probed
+source: https://numitea.com/api/ucp/mcp
+note: >-
+  Cross-cutting runtime semantics for Numi Tea's only programmable surface, the UCP
+  shopping MCP server. Derived from the probed tools/list manifest, the probed error
+  envelopes, /.well-known/ucp, robots.txt and llms.txt. Numi Tea publishes no API
+  reference of its own, so anything not evidenced by one of those is recorded as
+  undocumented rather than guessed.
+
+auth_style:
+  type: oauth2-bearer-jwt
+  detail: Bearer JWT in the Authorization header; capability discovery is anonymous, every tools/call is authenticated.
+  see: authentication/numi-tea-authentication.yml
+
+agent_identity:
+  required: true
+  mechanism: meta["ucp-agent"]["profile"]
+  detail: >-
+    Every one of the 13 tools requires a `meta` object carrying a URI that points at
+    the calling agent's own published UCP agent profile. This is a reciprocal
+    identity requirement -- the server will not transact with an agent that has not
+    published a profile of its own. Omitting it yields -32001 "UCP discovery failed"
+    with data.code "invalid_profile_url".
+
+idempotency:
+  supported: false
+  status: undocumented
+  detail: >-
+    No idempotency key parameter appears in any of the 13 tool inputSchemas, and no
+    Idempotency-Key header is documented anywhere on Numi Tea's surface. The
+    create/cancel resource model partly substitutes -- a cart or checkout is created
+    once and addressed by id thereafter -- but there is no published guarantee that a
+    retried create_checkout will not produce a second checkout. An agent must track
+    the returned id itself.
+  evidence: mcp/numi-tea-mcp-tools-list.json
+
+pagination:
+  style: undocumented
+  detail: >-
+    search_catalog and lookup_catalog accept a `catalog` object; no page/cursor/limit
+    convention is documented on Numi Tea's surface. The Shopify storefront JSON
+    endpoints (/products.json) use the platform's ?page= and ?limit= convention.
+
+versioning:
+  scheme: dated
+  detail: >-
+    UCP protocol versions are ISO dates. The store advertises 2026-04-08 (latest) and
+    2026-01-23, each resolvable at a version-pinned discovery document. The MCP
+    protocol version negotiated on initialize is a separate line (2024-11-05).
+  see: lifecycle/numi-tea-lifecycle.yml
+
+error_envelope:
+  format: jsonrpc-2.0-error
+  detail: 'Errors are JSON-RPC 2.0 error objects: {code, message, data}. `data` is sometimes a string and sometimes an object, so it is not a stable shape.'
+  see: errors/numi-tea-problem-types.yml
+
+rate_limit_signaling:
+  documented: partial
+  detail: >-
+    llms.txt instructs agents to "Respect rate limits and back off after a 429
+    response". No numeric limit, window, or response header is published anywhere on
+    Numi Tea's surface.
+  see: rate-limits/numi-tea-rate-limits.yml
+
+money_encoding:
+  format: iso4217-minor-units
+  detail: 'Integer minor units paired with a currency code: {"amount": 600, "currency": "USD"} is $6.00. Agents must convert before quoting a buyer.'
+  stated_in: Every tool description in the tools/list manifest.
+
+request_tracing:
+  supported: unknown
+  detail: JSON-RPC `id` correlates a response to its request. No separate request-id or trace header is documented.
+
+dry_run_mode:
+  supported: false
+  status: undocumented
+  detail: >-
+    No test/sandbox/dry-run mode is published. There is no test store, no test mode
+    flag on any tool, and no test payment credential. An agent cannot rehearse a
+    checkout against this surface.
+
+human_approval:
+  required: true
+  scope: checkout completion, payment, order placement
+  detail: >-
+    robots.txt and llms.txt both state that agents must never finalize payment
+    without an explicit, contemporaneous human approval step, and specifically
+    prohibit scripted form fills and browser automation that complete a checkout.
+  source: https://numitea.com/robots.txt
+
+reversibility:
+  grade: verified
+  summary: >-
+    The write surface has real, first-class reversal operations, and the two reversal
+    windows that matter to a buyer are both stated in Numi Tea's own published
+    documents. The one genuinely irreversible step -- complete_checkout -- is fenced
+    by a published human-approval requirement rather than by an undo.
+  operations:
+    - action: create_cart
+      reversal: cancel_cart
+      operation_id: cancel_cart
+      window: >-
+        Not stated. No expiry for an open cart is published, so an agent should not
+        assume a cart remains cancellable indefinitely.
+      window_stated: false
+    - action: create_checkout
+      reversal: cancel_checkout
+      operation_id: cancel_checkout
+      window: >-
+        Before complete_checkout. Once the checkout is completed the operation to
+        reach for is a return, not a cancel.
+      window_stated: true
+      source: https://numitea.com/llms.txt
+    - action: complete_checkout
+      reversal: null
+      operation_id: null
+      window: null
+      window_stated: false
+      note: >-
+        Terminal and irreversible through the API. There is no refund, void or
+        cancel_order tool in the manifest -- get_order is read-only. Reversal after
+        this point is a human customer-service process, not an API call.
+    - action: complete_checkout (post-purchase, out of band)
+      reversal: return or refund via customer support
+      operation_id: null
+      window: >-
+        30 days. "Returns or refunds are available within 30 days for purchases from
+        Numitea.com." Original shipping and handling charges are non-refundable
+        unless Numi Tea or its fulfillment team made an error, and the buyer must
+        contact Numi Tea to start a return before mailing an item.
+      window_stated: true
+      source: https://numitea.com/pages/satisfaction-guarantee
+      channel: human
+      note: >-
+        Recorded because it is the only reversal available after payment and an agent
+        needs to know it exists and that it is NOT programmable.
+  agent_guidance: >-
+    Everything up to complete_checkout is freely reversible with a published tool.
+    complete_checkout is the point of no return on the API; past it the only remedy
+    is a 30-day human return. An agent should treat complete_checkout as the approval
+    boundary, which is also exactly where Numi Tea's published policy puts it.

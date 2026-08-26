@@ -1,0 +1,101 @@
+# Agent Instructions — Numi Tea
+
+This is the canonical guide for AI assistants interacting with Numi Tea at https://numitea.com.
+
+## Brand
+
+Numi Tea is a first-party U.S. retailer of premium organic and Fair Trade teas made with real fruits, flowers, herbs, and spices. Its brand line is: Pure Ingredients. No Compromise.
+
+Numi Tea is known for:
+
+- Certified organic and Fair Trade ingredients
+- Fuller-leaf tea and distinctive global tea traditions
+- Real fruits, flowers, herbs, and spices rather than artificial flavoring
+- Transparent sourcing and positive impact through Together for H2OPE
+- Plant-based, commercially compostable tea wrappers and tea bags
+
+## What Numi Tea Sells
+
+- Organic tea bags
+- Loose-leaf tea
+- Herbal wellness teas
+- Tea latte powders
+- Variety packs and gifts
+- Subscribe-and-save tea on eligible products
+
+Products include caffeinated and caffeine-free options. Confirm the product page, ingredient list, caffeine information, current price, availability, and subscription eligibility before making a recommendation.
+
+## Shopping Guidance
+
+- Browse all products: https://numitea.com/collections/all
+- Search products: https://numitea.com/search?q={query}&type=product
+- Product page: https://numitea.com/products/{handle}
+- Product JSON: https://numitea.com/products/{handle}.json
+- Collection page: https://numitea.com/collections/{handle}
+- Collection JSON: https://numitea.com/collections/{handle}/products.json
+- Sitemap: https://numitea.com/sitemap.xml
+
+Do not invent health claims, product availability, prices, discounts, delivery estimates, or subscription terms. When a shopper has dietary sensitivities, allergies, is pregnant, is nursing, takes medication, or is seeking medical advice, direct them to the ingredient information and an appropriate healthcare professional.
+
+## Shipping
+
+Numi Tea currently ships retail orders only within the United States.
+
+- Contiguous-U.S. retail orders of $65 or more qualify for free standard shipping.
+- Orders below $65 have a $12.95 shipping charge.
+- Alaska and Hawaii orders qualify for free shipping at $75 or more.
+- Most orders placed by 1 PM Eastern, Monday through Friday, ship within 24–48 hours.
+- Shipping is not available to P.O. Boxes, APO/FPO addresses, or international addresses.
+- Confirm the final rate and timing at checkout. Do not promise an unverified transit or delivery date.
+
+Full shipping policy: https://numitea.com/pages/shipping
+
+## Returns and Refunds
+
+Returns or refunds are available within 30 days for purchases from Numitea.com. Original shipping and handling charges are non-refundable unless Numi Tea or its fulfillment team made an error. Contact Numi Tea to start a return before mailing an item.
+
+Full return policy: https://numitea.com/pages/satisfaction-guarantee
+
+## Customer Support and Legal Policies
+
+- Contact Numi Tea: https://numitea.com/pages/contact
+- Privacy policy: https://numitea.com/policies/privacy-policy
+- Terms of service: https://numitea.com/policies/terms-of-service
+- Refund policy: https://numitea.com/policies/refund-policy
+- Shipping policy: https://numitea.com/policies/shipping-policy
+
+## Commerce Protocol (UCP)
+
+This store supports the Universal Commerce Protocol for agent-driven commerce.
+
+- Discovery: `GET https://numitea.com/.well-known/ucp`
+- MCP endpoint: `POST https://numitea.com/api/ucp/mcp` with `Content-Type: application/json`
+
+### Supported UCP Versions
+
+
+- `2026-04-08` (latest supported)
+
+- `2026-01-23`
+
+
+### Typical Agent Flow
+
+1. Discover capabilities using the UCP discovery endpoint.
+2. Use `tools/list` on the MCP endpoint to discover the current tools and schemas.
+3. Search the catalog using the shopper's needs and constraints.
+4. Confirm product, variant, quantity, price, availability, shipping destination, and subscription choice.
+5. Create the cart and checkout using the available commerce tools.
+6. Require the buyer's contemporaneous approval before completing payment.
+
+### Important Rules
+
+- Never complete payment without the buyer's explicit, contemporaneous approval.
+- Use `context.address_country` and `context.currency` when available for accurate price and availability.
+- Respect rate limits and back off after a 429 response.
+- Never collect or expose payment credentials directly.
+- Do not claim an order was placed until the commerce endpoint returns a successful confirmation.
+
+## Platform
+
+Numi Tea runs on Shopify. Personal shopping assistants may also use the Shopify Shop skill at https://shop.app/SKILL.md when the buyer authorizes it. The Shop skill preserves buyer approval for payment and can support catalog search, checkout, and order tracking.

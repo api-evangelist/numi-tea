@@ -1,0 +1,35 @@
+generated: '2026-08-26'
+method: searched
+source: https://numitea.com/llms.txt
+note: >-
+  Numi Tea acknowledges rate limiting and tells agents how to react to it, but
+  publishes no number, no window and no response header. That is a real, partial
+  signal -- better than silence, short of actionable -- and is recorded as such.
+limit_count: 0
+limits: []
+documented_behavior:
+  exhaustion_status: 429
+  guidance: 'Respect rate limits and back off after a 429 response.'
+  source: https://numitea.com/llms.txt
+  backoff: unspecified
+  detail: >-
+    No retry-after value, no backoff schedule and no maximum retry count is stated.
+    An agent is told to back off but not by how much.
+response_headers:
+  documented: false
+  observed: false
+  detail: >-
+    No X-RateLimit-*, RateLimit-* or Retry-After header is documented on any Numi Tea
+    host. Headers were not observed on the anonymous initialize/tools/list responses
+    during this pass; no limit was reached, so absence here is not proof they are
+    never sent.
+scope:
+  documented: false
+  detail: >-
+    Whether limits apply per agent profile, per customer token, per IP or per store is
+    not stated anywhere. This matters: the required meta["ucp-agent"]["profile"]
+    identifies the calling agent, which would be the natural key, but nothing
+    confirms it.
+platform_note: >-
+  Underlying limits are Shopify's rather than Numi Tea's, and Shopify does not
+  publish the UCP endpoint's limits on the merchant's behalf either.

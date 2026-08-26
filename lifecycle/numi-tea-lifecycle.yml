@@ -1,0 +1,56 @@
+generated: '2026-08-26'
+method: probed
+source: https://numitea.com/.well-known/ucp
+note: >-
+  Numi Tea is a consumer packaged-goods company with no developer program, so there
+  is no API changelog, no deprecation policy, no SLA and no status page of its own.
+  What versioning discipline exists is inherited from the UCP protocol, which is
+  genuinely versioned and genuinely advertised -- that part is recorded as real.
+
+versioning:
+  scheme: dated
+  current_version: '2026-04-08'
+  supported_versions:
+    - version: '2026-04-08'
+      status: current
+      discovery: https://numitea.com/.well-known/ucp/2026-04-08
+      http_status: 200
+    - version: '2026-01-23'
+      status: supported
+      discovery: https://numitea.com/.well-known/ucp/2026-01-23
+      http_status: 200
+  detail: >-
+    Two protocol versions are concurrently served and independently resolvable, which
+    is real multi-version support rather than a version string in a header. A
+    capability may additionally declare requires.protocol.min -- fulfillment and
+    discount both require a minimum of 2026-04-08 -- so version negotiation is
+    per-capability, not just per-store.
+  mcp_protocol_version: '2024-11-05'
+  mcp_note: Negotiated on initialize; a separate version line from the UCP protocol version.
+
+deprecation_policy:
+  published: false
+  detail: >-
+    No deprecation policy, sunset schedule or notice period is published. Nothing on
+    any Numi Tea host commits to how long 2026-01-23 remains served. No Sunset or
+    Deprecation response header (RFC 8594) is documented.
+
+status_page:
+  published: false
+  detail: >-
+    No status page exists on any Numi Tea host, and none is referenced from
+    robots.txt, llms.txt or the storefront footer. Storefront availability is
+    Shopify's, and Shopify's own status page (status.shopify.com) is not advertised
+    by Numi Tea as covering this surface, so it is not recorded as Numi Tea's.
+
+sla:
+  published: false
+
+changelog:
+  published: false
+  detail: >-
+    No API changelog. Numi Tea publishes a consumer blog at /blogs/news, which is
+    editorial content about tea, not a record of changes to a programmable surface.
+
+deprecated_operations: []
+deprecated_operations_note: None of the 13 MCP tools carries a deprecation marker in the tools/list manifest.

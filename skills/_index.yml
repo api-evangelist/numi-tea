@@ -1,0 +1,24 @@
+generated: '2026-08-26'
+method: generated
+source: mcp/numi-tea-mcp-tools-list.json
+note: >-
+  Numi Tea publishes no OpenAPI, but it does serve a live MCP manifest with complete
+  JSON Schema for all 13 tools. These skills are grounded in that probed manifest and
+  in Numi Tea's own published agent instructions (llms.txt, agents.md, robots.txt) --
+  every tool name referenced is verbatim from the manifest. Numi Tea publishes no
+  skills of its own; these are ours.
+provider_published_skills: false
+skill_count: 2
+skills:
+  - name: numi-tea-shop-and-checkout
+    file: numi-tea-shop-and-checkout.md
+    summary: Search, cart, and checkout up to the human-approval boundary, with the reversal paths and the 30-day return window.
+    operations: 12
+    writes: true
+    human_approval_required: true
+  - name: numi-tea-catalog-research
+    file: numi-tea-catalog-research.md
+    summary: Read-only catalog discovery and accurate product reporting, with an anonymous storefront-JSON fallback.
+    operations: 3
+    writes: false
+    human_approval_required: false

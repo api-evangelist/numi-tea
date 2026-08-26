@@ -1,0 +1,136 @@
+generated: '2026-08-26'
+method: probed
+source: https://numitea.com/.well-known/ucp
+note: >-
+  Every assertion below is evidenced by a document Numi Tea's own hosts served on
+  2026-08-26, not by a marketing claim. Numi Tea publishes no compliance or trust
+  page of its own.
+
+standards:
+  - id: oauth2
+    name: OAuth 2.0 Authorization Framework (RFC 6749)
+    conforms: true
+    evidence: >-
+      /.well-known/oauth-authorization-server (200) declares authorization_code and
+      refresh_token grants with client_secret_basic/client_secret_post token endpoint
+      auth.
+  - id: rfc8414
+    name: OAuth 2.0 Authorization Server Metadata (RFC 8414)
+    conforms: true
+    evidence: https://numitea.com/.well-known/oauth-authorization-server returned 200 with issuer, token_endpoint, authorization_endpoint and jwks_uri.
+  - id: rfc9728
+    name: OAuth 2.0 Protected Resource Metadata (RFC 9728)
+    conforms: true
+    evidence: >-
+      https://numitea.com/.well-known/oauth-protected-resource returned 200 declaring
+      resource https://numitea.com, two authorization_servers and
+      bearer_methods_supported ["header"].
+  - id: oidc
+    name: OpenID Connect Discovery 1.0
+    conforms: true
+    evidence: >-
+      /.well-known/openid-configuration (200) on both numitea.com and
+      account.numitea.com; response_types_supported ["code"],
+      id_token_signing_alg_values_supported ["RS256"], claims include sub/iss/aud/exp.
+  - id: pkce
+    name: PKCE (RFC 7636)
+    conforms: true
+    evidence: code_challenge_methods_supported ["S256"] in the OIDC discovery document.
+  - id: jwks
+    name: JSON Web Key Set (RFC 7517)
+    conforms: true
+    evidence: https://account.numitea.com/authentication/.well-known/jwks.json returned 200 with RS256 keys.
+  - id: mcp
+    name: Model Context Protocol
+    conforms: true
+    version: '2024-11-05'
+    evidence: >-
+      POST https://numitea.com/api/ucp/mcp initialize returned serverInfo
+      {name universal-commerce, version 0.1.0} and protocolVersion 2024-11-05;
+      tools/list returned 13 tools each with a JSON Schema 2020-12 inputSchema.
+  - id: json-schema-2020-12
+    name: JSON Schema 2020-12
+    conforms: true
+    evidence: Every one of the 13 MCP tool inputSchema objects declares $schema https://json-schema.org/draft/2020-12/schema.
+  - id: jsonrpc2
+    name: JSON-RPC 2.0
+    conforms: true
+    evidence: MCP transport; observed both result and structured error envelopes (-32000, -32001) carrying jsonrpc "2.0" and the request id.
+  - id: iso4217
+    name: ISO 4217 currency codes
+    conforms: true
+    evidence: >-
+      Every UCP tool description specifies prices as integer minor units paired with
+      an ISO 4217 currency code, e.g. {"amount": 600, "currency": "USD"}.
+  - id: rfc9457
+    name: RFC 9457 Problem Details
+    conforms: false
+    evidence: >-
+      There is no HTTP+JSON API surface here to carry problem+json. Errors travel as
+      JSON-RPC error objects instead. Recorded as a considered non-applicable, not a
+      failure.
+  - id: rfc8615
+    name: Well-Known URIs (RFC 8615)
+    conforms: true
+    evidence: Seven documents served under /.well-known/ across numitea.com and account.numitea.com.
+
+domain_standard:
+  id: ucp
+  name: Universal Commerce Protocol (UCP)
+  market: agent-driven retail commerce
+  conforms: true
+  declared_version: '2026-04-08'
+  supported_versions:
+    - '2026-04-08'
+    - '2026-01-23'
+  spec: https://ucp.dev/2026-04-08/specification/overview/
+  signature: >-
+    The contract declares the standard about itself. /.well-known/ucp advertises the
+    namespaced service "dev.ucp.shopping" with transport "mcp" and an OpenRPC schema
+    at https://ucp.dev/2026-04-08/services/shopping/mcp.openrpc.json, plus seven
+    namespaced capability declarations each pinned to a published JSON Schema.
+  capabilities:
+    - dev.ucp.shopping.cart
+    - dev.ucp.shopping.checkout
+    - dev.ucp.shopping.order
+    - dev.ucp.shopping.catalog.search
+    - dev.ucp.shopping.catalog.lookup
+    - dev.ucp.shopping.fulfillment
+    - dev.ucp.shopping.discount
+  vendor_extensions:
+    - dev.shopify.catalog
+  payment_handlers:
+    - id: gpay
+      namespace: com.google.pay
+      version: '2026-01-11'
+    - id: shopify.card
+      namespace: dev.shopify.card
+      version: '2026-01-15'
+    - id: shop_pay
+      namespace: dev.shopify.shop_pay
+      version: '2026-04-08'
+  buyer_significance: >-
+    An agent that already speaks UCP can search this catalog, build a cart and drive
+    a checkout with no bespoke connector. That is the whole point of the standard,
+    and Numi Tea's storefront answers it today at a version pinned to a published
+    schema.
+  provenance: >-
+    Provisioned by Shopify for the merchant storefront rather than authored by Numi
+    Tea. Recorded as conforming because the conformance is real and served from Numi
+    Tea's own host; the platform origin is stated so nobody reads it as in-house
+    engineering.
+
+certifications: []
+certifications_note: >-
+  No SOC 2, ISO 27001, PCI or other security certification is published on any Numi
+  Tea host, and there is no trust center. Numi Tea's public certifications are
+  product-side, not information-security: USDA Organic, Fair Trade Certified,
+  Verified Fair Labor, Non-GMO Project Verified and B Corp. Those are recorded here
+  for accuracy but are NOT information-security compliance and must not be scored as
+  such.
+product_certifications:
+  - USDA Certified Organic
+  - Fair Trade Certified
+  - Verified Fair Labor
+  - Non-GMO Project Verified
+  - Certified B Corporation
