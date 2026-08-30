@@ -40,6 +40,18 @@ tags:
 - Fair Trade
 - Agentic Commerce
 - Universal Commerce Protocol
+- MCP
+- Shopify
+tags_raw:
+- Tea
+- Beverages
+- Consumer Packaged Goods
+- Retail
+- E-Commerce
+- Organic
+- Fair Trade
+- Agentic Commerce
+- Universal Commerce Protocol
 - Model Context Protocol
 - Shopify
 apis:
@@ -56,6 +68,11 @@ apis:
   humanURL: https://numitea.com/agents.md
   baseURL: https://numitea.com/api/ucp/mcp
   tags:
+  - Agentic Commerce
+  - E-Commerce
+  - MCP
+  - Universal Commerce Protocol
+  tags_raw:
   - Agentic Commerce
   - E-Commerce
   - Model Context Protocol
