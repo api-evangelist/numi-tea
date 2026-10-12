@@ -1,0 +1,16 @@
+generated: '2026-10-12'
+method: none
+source:
+- https://zapier.com/apps/numi-tea/integrations
+- https://n8n.io/integrations/numi-tea/
+- https://composio.dev/toolkits/numi-tea
+- https://monid.ai/tools/numi-tea
+checked:
+- https://composio.dev/toolkits/numi-tea
+- https://monid.ai/tools/numi-tea
+- https://n8n.io/integrations/numi-tea/
+- https://zapier.com/apps/numi-tea/integrations
+summary: null
+marketplace_apps: []
+edges: []
+templates: []
